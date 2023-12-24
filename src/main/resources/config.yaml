@@ -1,0 +1,26 @@
+# The time when the server should restart
+# Minimum value: 00:00
+# Maximum value: 23:59
+restart-time: "04:00"
+
+# Customize the title screen shown to the player
+show-title: true
+title-message: "Server restarts in %time%"
+# Customize how many minutes before the event titles appear
+# Separate with commas
+title-message-interval:
+  - 15
+  - 10
+  - 5
+  - 1
+
+# Customize the message shown in the chat
+send-message: false
+chat-message: "Server restarts in %time%"
+# Customize how many minutes before the event messages will be sent
+# Separate with commas
+chat-message-interval:
+  - 15
+  - 10
+  - 5
+  - 1
