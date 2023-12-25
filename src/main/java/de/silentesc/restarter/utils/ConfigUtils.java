@@ -1,9 +1,15 @@
 package de.silentesc.restarter.utils;
 
+import org.bukkit.Bukkit;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 
 public class ConfigUtils {
     private FileConfig config;
@@ -16,31 +22,38 @@ public class ConfigUtils {
         config = new FileConfig("config.yaml");
     }
 
-    public LocalTime getRestartTimeDecimal() {
+    public LocalDateTime getRestartTime() {
         // Default value
-        LocalTime defaultRestartTime = LocalTime.parse("04:00");
+        LocalDateTime defaultRestartDateTime = LocalTime.parse("04:00").atDate(LocalDate.now());
+        LocalDateTime restartDateTime;
 
         // Get object and check for null
         Object restartTimeObj = config.get("restart-time");
-        if (restartTimeObj == null) return defaultRestartTime;
-
-        // Try to parse time from config
-        LocalTime restartTime = null;
-        try {
-             restartTime = LocalTime.parse(restartTimeObj.toString());
-        } catch (DateTimeParseException e) {
-            System.out.println("Error parsing time, check if config is correct");
+        if (restartTimeObj == null)
+            restartDateTime = defaultRestartDateTime;
+        else {
+            // Try to parse time from config
+            try {
+                restartDateTime = LocalTime.parse(restartTimeObj.toString()).atDate(LocalDate.now());
+            } catch (DateTimeParseException e) {
+                Bukkit.getLogger().log(Level.WARNING, "Error parsing time, check if config is correct");
+                restartDateTime = defaultRestartDateTime;
+            }
         }
 
+        // If the restart was today, move restart to next day
+        if (ChronoUnit.SECONDS.between(LocalDateTime.now(), restartDateTime) <= 0)
+            restartDateTime = restartDateTime.plusDays(1L);
+
         // Return value
-        return (restartTime != null) ? restartTime : defaultRestartTime;
+        return restartDateTime;
     }
 
     public boolean showTitle() {
         return config.getBoolean("show-title");
     }
 
-    public String getTitleMessage() {
+    public String getTitleMessageTemplate() {
         // Default value
         String defaultTitleMessage = "Server restarts in %time%";
 
@@ -52,16 +65,16 @@ public class ConfigUtils {
         return titleMessageObj.toString();
     }
 
-    public List<LocalTime> getTitleTimes() {
+    public List<LocalDateTime> getTitleDateTimes() {
         // List
-        List<LocalTime> titleTimes = new ArrayList<>();
+        List<LocalDateTime> titleTimes = new ArrayList<>();
 
         // Check for null
         List<Integer> intervals = config.getIntegerList("title-message-interval");
 
         // Get times and add them to list
         for (Integer interval : intervals) {
-            LocalTime intervalTime = getRestartTimeDecimal().minusMinutes(interval);
+            LocalDateTime intervalTime = getRestartTime().minusMinutes(interval);
             titleTimes.add(intervalTime);
         }
 
@@ -73,7 +86,7 @@ public class ConfigUtils {
         return config.getBoolean("show-message");
     }
 
-    public String getChatMessage() {
+    public String getChatMessageTemplate() {
         // Default value
         String defaultChatMessage = "Server restarts in %time%";
 
@@ -85,16 +98,16 @@ public class ConfigUtils {
         return chatMessageObj.toString();
     }
 
-    public List<LocalTime> getChatTimes() {
+    public List<LocalDateTime> getChatDateTimes() {
         // List
-        List<LocalTime> chatTimes = new ArrayList<>();
+        List<LocalDateTime> chatTimes = new ArrayList<>();
 
         // Check for null
         List<Integer> intervals = config.getIntegerList("chat-message-interval");
 
         // Get times and add them to list
         for (Integer interval : intervals) {
-            LocalTime intervalTime = getRestartTimeDecimal().minusMinutes(interval);
+            LocalDateTime intervalTime = getRestartTime().minusMinutes(interval);
             chatTimes.add(intervalTime);
         }
 

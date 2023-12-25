@@ -1,6 +1,9 @@
 package de.silentesc.restarter;
 
 import de.silentesc.restarter.commands.ReloadConfigCommand;
+import de.silentesc.restarter.tasks.MessageScheduler;
+import de.silentesc.restarter.tasks.RestartScheduler;
+import de.silentesc.restarter.tasks.TitleScheduler;
 import de.silentesc.restarter.utils.ConfigUtils;
 import de.silentesc.restarter.utils.ShortMessages;
 import org.bukkit.Bukkit;
@@ -24,6 +27,7 @@ public final class Main extends JavaPlugin {
         loadConfig();
         initialize();
         register();
+        runTasks();
     }
 
     private void initialize() {
@@ -41,6 +45,12 @@ public final class Main extends JavaPlugin {
     private void register() {
         // Commands
         Objects.requireNonNull(Bukkit.getPluginCommand("restarter_reloadcfg")).setExecutor(new ReloadConfigCommand());
+    }
+
+    private void runTasks() {
+        new RestartScheduler().scheduleRestart();
+        new TitleScheduler().scheduleTitles();
+        new MessageScheduler().scheduleMessages();
     }
 
     // Getter

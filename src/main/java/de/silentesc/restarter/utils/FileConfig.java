@@ -1,11 +1,13 @@
 package de.silentesc.restarter.utils;
 
 import de.silentesc.restarter.Main;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 public class FileConfig extends YamlConfiguration {
     private final String path;
@@ -18,7 +20,7 @@ public class FileConfig extends YamlConfiguration {
         try {
             load(this.path);
         } catch (InvalidConfigurationException | IOException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().log(Level.SEVERE, String.format("Error while loading config inside FileConfig: %s", e));
         }
     }
 
@@ -26,7 +28,7 @@ public class FileConfig extends YamlConfiguration {
         try {
             save(this.path);
         } catch (IOException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().log(Level.SEVERE, String.format("Error while saving config inside FileConfig: %s", e));
         }
     }
 }
