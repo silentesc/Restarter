@@ -16,16 +16,21 @@ public class MessageScheduler extends ScheduleHelper {
 
         // Iterate through times
         for (LocalDateTime time : Main.getINSTANCE().getConfigUtils().getChatDateTimes()) {
-            // Check for events in the past and ignore them
-            long secondsUntilMessage = ChronoUnit.SECONDS.between(getNowDateTime(), time);
-            if (secondsUntilMessage <= 0) continue;
-            // Setting schedule
-            Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getINSTANCE(), () -> {
-                // Send message
-                long minutes = Math.abs(ChronoUnit.MINUTES.between(getRestartDateTime(), time));
-                String chatMessage = chatMessageTemplate.replaceAll("%time%", String.valueOf(minutes));
-                Bukkit.broadcastMessage(Main.getINSTANCE().getPrefix() + chatMessage);
-            }, ((long) 20 * secondsUntilMessage));
+            startScheduler(chatMessageTemplate, time);
         }
+    }
+
+    private void startScheduler(String chatMessageTemplate, LocalDateTime time) {
+        // Check for events in the past and ignore them
+        long secondsUntilMessage = ChronoUnit.SECONDS.between(getNowDateTime(), time);
+        if (secondsUntilMessage <= 0) return;
+
+        // Setting schedule
+        Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getINSTANCE(), () -> {
+            // Send message
+            long minutes = Math.abs(ChronoUnit.MINUTES.between(getRestartDateTime(), time));
+            String chatMessage = chatMessageTemplate.replaceAll("%time%", String.valueOf(minutes));
+            Bukkit.broadcastMessage(Main.getINSTANCE().getPrefix() + chatMessage);
+        }, ((long) 20 * secondsUntilMessage));
     }
 }

@@ -17,18 +17,23 @@ public class TitleScheduler extends ScheduleHelper {
 
         // Iterate through times
         for (LocalDateTime time : Main.getINSTANCE().getConfigUtils().getTitleDateTimes()) {
-            // Check for events in the past and ignore them
-            long secondsUntilTitle = ChronoUnit.SECONDS.between(getNowDateTime(), time);
-            if (secondsUntilTitle <= 0) continue;
-            // Setting schedule
-            Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getINSTANCE(), () -> {
-                // Show title to all online users
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    long minutes = Math.abs(ChronoUnit.MINUTES.between(getRestartDateTime(), time));
-                    String titleMessage = titleMessageTemplate.replaceAll("%time%", String.valueOf(minutes));
-                    p.sendTitle(titleMessage, "", 10, 60, 10);
-                }
-            }, ((long) 20 * secondsUntilTitle));
+            startScheduler(titleMessageTemplate, time);
         }
+    }
+
+    private void startScheduler(String titleMessageTemplate, LocalDateTime time) {
+        // Check for events in the past and ignore them
+        long secondsUntilTitle = ChronoUnit.SECONDS.between(getNowDateTime(), time);
+        if (secondsUntilTitle <= 0) return;
+
+        // Setting schedule
+        Bukkit.getScheduler().runTaskLaterAsynchronously(Main.getINSTANCE(), () -> {
+            // Show title to all online users
+            for (Player p : Bukkit.getOnlinePlayers()) {
+                long minutes = Math.abs(ChronoUnit.MINUTES.between(getRestartDateTime(), time));
+                String titleMessage = titleMessageTemplate.replaceAll("%time%", String.valueOf(minutes));
+                p.sendTitle(titleMessage, "", 10, 60, 10);
+            }
+        }, ((long) 20 * secondsUntilTitle));
     }
 }

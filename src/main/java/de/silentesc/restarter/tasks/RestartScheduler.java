@@ -11,7 +11,10 @@ public class RestartScheduler extends ScheduleHelper {
         long secondsUntilRestart = ChronoUnit.SECONDS.between(getNowDateTime(), getRestartDateTime());
 
         // Schedule restart
-        Bukkit.getScheduler().runTaskLater(Main.getINSTANCE(), () ->
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "restart"), ((long) 20 * secondsUntilRestart));
+        Bukkit.getScheduler().runTaskLater(
+                Main.getINSTANCE(),
+                () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "restart"),
+                ((long) 20 * secondsUntilRestart)
+        );
     }
 }
