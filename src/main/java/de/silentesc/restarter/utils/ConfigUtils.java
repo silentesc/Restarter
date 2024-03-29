@@ -83,7 +83,7 @@ public class ConfigUtils {
     }
 
     public boolean showMessage() {
-        return config.getBoolean("show-message");
+        return config.getBoolean("send-message");
     }
 
     public String getChatMessageTemplate() {

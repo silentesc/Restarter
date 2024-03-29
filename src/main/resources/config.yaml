@@ -15,7 +15,7 @@ title-message-interval:
   - 1
 
 # Customize the message shown in the chat
-send-message: false
+send-message: true
 chat-message: "Server restarts in %time% minute(s)"
 # Customize how many minutes before the event messages will be sent
 # Separate with commas
